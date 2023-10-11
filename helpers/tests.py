@@ -1,11 +1,14 @@
 import os
 
 from pydeequ.checks import Check, CheckLevel
-from pydeequ.suggestions import (CompleteIfCompleteRule,
-                                 ConstraintSuggestionRunner,
-                                 NonNegativeNumbersRule,
-                                 RetainCompletenessRule, RetainTypeRule,
-                                 UniqueIfApproximatelyUniqueRule)
+from pydeequ.suggestions import (
+    CompleteIfCompleteRule,
+    ConstraintSuggestionRunner,
+    NonNegativeNumbersRule,
+    RetainCompletenessRule,
+    RetainTypeRule,
+    UniqueIfApproximatelyUniqueRule,
+)
 from pydeequ.verification import VerificationResult, VerificationSuite
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col

@@ -25,24 +25,27 @@ class Finalize:
         drug = drug.alias("drug_d")
         presc = presc.alias("presc_d")
         presc_drug = presc_drug.alias("presc_drug_d")
-        
-        
-        
-        presc_final = (presc_drug.join(presc, presc_drug["presc_id"] == presc["presc_id"])
-                         .select("presc_drug_d.*", "presc_d.presc_type_desc")
-                )
-        
+
+        presc_final = presc_drug.join(
+            presc, presc_drug["presc_id"] == presc["presc_id"]
+        ).select("presc_drug_d.*", "presc_d.presc_type_desc")
+
         grouped = presc_drug.groupBy("drug_brand_name", "drug").agg(
-                F.sum("total_claims").alias("total_claims"),
-                F.sum("total_drug_cost").alias("total_cost"))
+            F.sum("total_claims").alias("total_claims"),
+            F.sum("total_drug_cost").alias("total_cost"),
+        )
 
         grouped = grouped.alias("g")
-        
-        drug_final = (grouped.join(drug, 
-                (presc_drug["drug_brand_name"] == drug["drug_brand_name"])
-                & (presc_drug["drug"] == drug["drug"]))
-                .select("g.*", "drug_d.is_antibiotic_check"))
-        
 
-        presc_final.show()
-        drug_final.show()
+        drug_final = grouped.join(
+            drug,
+            (presc_drug["drug_brand_name"] == drug["drug_brand_name"])
+            & (presc_drug["drug"] == drug["drug"]),
+        ).select("g.*", "drug_d.is_antibiotic_check")
+
+        presc_final.write.format("parquet").mode("overwrite").save(
+            "/home/jagac/spark-pipeline/final/presc.parquet"
+        )
+        drug_final.write.format("parquet").mode("overwrite").save(
+            "/home/jagac/spark-pipeline/final/drug.parquet"
+        )

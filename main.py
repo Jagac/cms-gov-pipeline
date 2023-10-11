@@ -22,13 +22,13 @@ def run_pipeline():
     prescriber_pth = "/home/jagac/providers.csv"
     geo_drug_pth = "/home/jagac/geo_drug.csv"
 
-    # Tests below cause  
+    # Tests below cause
     # File "<string>", line 1, in <module>
     # NameError: name 'ConstrainableDataTypes' is not defined
     # test.run_test(prescriber_drug_pth)
     # test.run_test(prescriber_pth)
     # test.run_test(geo_drug_pth)
-        
+
     save_prescriber_drug_pth = (
         "/home/jagac/spark-pipeline/preprocessed/perscriber_drug.parquet"
     )
@@ -42,15 +42,15 @@ def run_pipeline():
         geo_drug_path=geo_drug_pth,
     )
 
-    # preprocess_data.prepare_prescriber_drug(
-    #     save_prescriber_drug_pth=save_prescriber_drug_pth
-    # )
-    # preprocess_data.prepare_prescriber(save_prescriber_pth=save_prescriber_pth)
-    # preprocess_data.prepare_geo_drug(save_geo_drug_pth=save_geo_drug_pth)
+    preprocess_data.prepare_prescriber_drug(
+        save_prescriber_drug_pth=save_prescriber_drug_pth
+    )
+    preprocess_data.prepare_prescriber(save_prescriber_pth=save_prescriber_pth)
+    preprocess_data.prepare_geo_drug(save_geo_drug_pth=save_geo_drug_pth)
 
-    # test.run_test(save_prescriber_drug_pth)
-    # test.run_test(save_prescriber_pth)
-    # test.run_test(save_geo_drug_pth)
+    test.run_test(save_prescriber_drug_pth)
+    test.run_test(save_prescriber_pth)
+    test.run_test(save_geo_drug_pth)
 
     final_transformation = Finalize(
         spark=spark,
@@ -59,8 +59,13 @@ def run_pipeline():
         save_geo_drug_path=save_geo_drug_pth,
     )
     final_transformation.create_final_dataset()
-    
-    
+
+    final_loc_1 = "/home/jagac/spark-pipeline/final/presc.parquet"
+    final_loc_2 = "/home/jagac/spark-pipeline/final/drug.parquet"
+
+    test.run_test(final_loc_1)
+    test.run_test(final_loc_2)
+
     spark.sparkContext._gateway.shutdown_callback_server()
     spark.stop()
 
